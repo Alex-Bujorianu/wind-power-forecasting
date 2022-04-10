@@ -1,4 +1,4 @@
-#TODO
+# TODO
 
 1. Remove the chunk of missing data at the beginning, or select only the time period that has data.
 2. Relevant features: wind speed, wind direction (from a weather forecast) and past values. We know that the data is seasonal, i.e. it is windier during the winter.
