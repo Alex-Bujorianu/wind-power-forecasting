@@ -1,9 +1,9 @@
 # TODO
 
-1. Remove the chunk of missing data at the beginning, or select only the time period that has data.
+1. Remove the chunk of missing data at the beginning, or select only the time period that has data. DONE
 2. Relevant features: wind speed, wind direction (from a weather forecast) and past values. We know that the data is seasonal, i.e. it is windier during the winter.
-3. Downsample the data from intervals of 10 minutes to 1 hour.
-4. Impute missing values, if necessary (upsampling should be enough).
+3. Downsample the data from intervals of 10 minutes to 1 hour. DONE
+4. Impute missing values, if necessary (upsampling should be enough). DONE
 5. Wind power is negative for low wind speeds. Why?
 6. Train SARIMA, polynomial regression and neural network models.
 7. Make predictions and compare the performance.
