@@ -1,5 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.stattools import adfuller
+from numpy import array
+
 data = pd.read_csv("Cleaned_data.csv")
 subset = data[["ActivePower", "WindSpeed", "WindDirection"]]
 print(subset.head())
@@ -14,7 +18,6 @@ wind_directions = subset["WindDirection"].tolist()
 powers = subset['ActivePower'].tolist()
 results = []
 for i in range(len(windspeeds)):
-    print(windspeeds[i])
     if (windspeeds[i] > 4.5) and (windspeeds[i] < 5.5):
         results.append({"Wind speed": 5,
                         "Wind direction": wind_directions[i],
@@ -26,3 +29,21 @@ plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
 plt.show()
+
+# Autoregression plots
+windspeeds_months = subset['WindSpeed'].resample('M').mean()
+print(windspeeds_months.shape)
+windspeeds_months = windspeeds_months.to_numpy()
+plot_acf(windspeeds_months, lags=12)
+plot_pacf(windspeeds_months, lags=12)
+plt.show()
+
+# Dickley Fuller test
+windspeeds_days = subset['WindSpeed']
+results_windspeeds_days = adfuller(windspeeds_days, autolag="AIC")
+results_windspeeds_df = adfuller(windspeeds_months, autolag="AIC")
+print(results_windspeeds_df)
+print(results_windspeeds_days)
+# So as expected, the windspeed is seasonal for the months, but not when taking into account
+print("Windspeed is (months) stationary?", results_windspeeds_df[0] < results_windspeeds_df[4]['1%'])
+print("Windspeed is (days) stationary?", results_windspeeds_days[0] < results_windspeeds_days[4]['1%'])

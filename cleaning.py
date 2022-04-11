@@ -12,15 +12,23 @@ series = series.set_index(datetime_index)
 #Drop redundant column
 series = series.drop(['Unnamed: 0'], axis=1)
 print(series.shape)
-#Resampling to hoursand taking the average of each hour
+#Resampling to hours and taking the average of each hour
 series = series.resample('H').mean()
 print(series.shape)
+print(series.head())
 
 series = series.dropna(axis=0, how='any')
+# Check for irregularity
+for i in range(1, len(series)):
+    irregular_count = 0
+    if (series.index[i].hour - series.index[i-1].hour  > 1):
+        print('Time series is irregular')
+        print(series.index[i], series.index[i-1])
+        break
 print(series.shape)
 print(series.head(10))
 print(series.isnull().values.any())
-#fill in missing values with zero using the fillforward function
-series = series.fillna(0).astype(float)
+# Make negative values 0
+series.clip(lower=0, inplace=True)
 
 series.to_csv("Cleaned_data.csv", index=True)
