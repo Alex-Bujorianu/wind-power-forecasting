@@ -5,7 +5,7 @@ from statsmodels.tsa.stattools import adfuller
 from numpy import array
 
 data = pd.read_csv("Cleaned_data.csv")
-subset = data[["ActivePower", "WindSpeed", "WindDirection"]]
+subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection"]]
 print(subset.head())
 plt.scatter(subset['WindSpeed'], subset['ActivePower'])
 plt.xlabel("Wind speed (m/s)")
@@ -29,6 +29,16 @@ plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
 plt.show()
+
+
+#convert Datetime to pandas datetimeand set it as index
+subset["Unnamed: 0"] = pd.to_datetime(subset["Unnamed: 0"], format="%Y-%m-%d %H:%M:%S%z")
+datetime_index = pd.DatetimeIndex(subset["Unnamed: 0"].values)
+subset = subset.set_index(datetime_index)
+#Drop redundant column
+subset = subset.drop(['Unnamed: 0'], axis=1)
+print(subset.shape)
+#Resampling to hoursand taking the average of each hour
 
 # Autoregression plots
 windspeeds_months = subset['WindSpeed'].resample('M').mean()
