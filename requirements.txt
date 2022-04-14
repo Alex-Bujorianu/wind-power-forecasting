@@ -1,5 +1,6 @@
 pandas
 matplotlib
+sklearn
 missingno
 statsmodels
 numpy

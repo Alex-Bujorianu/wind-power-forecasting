@@ -31,4 +31,5 @@ print(series.isnull().values.any())
 # Make negative values 0
 series.clip(lower=0, inplace=True)
 
-series.to_csv("Cleaned_data.csv", index=True)
+if not series.isnull().values.any():
+    series.to_csv("Cleaned_data.csv", index=True)
