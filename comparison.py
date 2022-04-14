@@ -8,7 +8,7 @@ data = pd.read_csv("Cleaned_data.csv")
 x = np.array(data['WindSpeed'].tolist())
 y = np.array(data['ActivePower'].tolist())
 x_test = x[int(0.8*len(x)):]
-y_test = y[int(0.8*len(x)):]
+y_test = y[int(0.8*len(y)):]
 print(x_test, y_test)
 mse_dumb_polynomial = mean_squared_error(y_test, polynomial_prediction(x_test))
 mse_smart_polynomial = mean_squared_error(y_test, polynomial_prediction_smarter(x_test))
