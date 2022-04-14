@@ -22,9 +22,17 @@ for i in range(len(windspeeds)):
         results.append({"Wind speed": 5,
                         "Wind direction": wind_directions[i],
                         "Power": powers[i]})
+    elif (windspeeds[i] > 9.5) and (windspeeds[i] < 10.5):
+        results.append({"Wind speed": 10,
+                        "Wind direction": wind_directions[i],
+                        "Power": powers[i]})
+    else:
+        continue
 
 plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==5],
-            [x["Power"] for x in results if x["Wind speed"]==5], label="5m/s")
+            [x["Power"] for x in results if x["Wind speed"]==5], 'o', label="5m/s")
+plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==10],
+            [x["Power"] for x in results if x["Wind speed"]==10], 'o', label="10m/s")
 plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
