@@ -2,8 +2,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
+from sklearn.feature_selection import r_regression
 
 data = pd.read_csv("Cleaned_data.csv")
+# Perform feature selection on whole dataset.
+X = pd.read_csv("Turbine_Data.csv")
+X = X.drop(labels="Unnamed: 0", axis=1)
+X = X.drop(labels="WTG", axis=1)
+X.dropna(axis=0, how='any', inplace=True)
+print(X)
+correlation_coefficients = r_regression(X=X, y=X["ActivePower"].tolist())
+print(correlation_coefficients)
 subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection"]]
 print(subset.head())
 plt.scatter(subset['WindSpeed'], subset['ActivePower'])
