@@ -1,4 +1,5 @@
 import pandas as pd
+import missingno as msno
 
 series = pd.read_csv("Turbine_Data.csv")
 # Remove uninteresting columns
@@ -31,6 +32,10 @@ print(series.head(10))
 print(series.isnull().values.any())
 # Make negative values 0
 series.clip(lower=0, inplace=True)
+
+# Print Missing
+msno.matrix(series)
+plt.show()
 
 if not series.isnull().values.any():
     series.to_csv("Cleaned_data.csv", index=True)
