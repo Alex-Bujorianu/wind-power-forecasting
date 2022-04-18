@@ -123,11 +123,14 @@ def optimize_SARIMA(parameters_list, d, D, s, exog):
             model = SARIMAX(exog, order=(param[0], d, param[1]), seasonal_order=(param[2], D, param[3], s), enforce_stationarity=True, enforce_invertibility=True)
             model_fit = model.fit()
         except:
+            print("An exception occured with the SARIMAX model")
+            exception_count += 1
             continue
 
         aic = model_fit.aic
         results.append([param, aic])
 
+    print("Number of exceptions: ", exception_count)
     result_df = pd.DataFrame(results)
     print(result_df)
     result_df.columns = ['(p,q)x(P,Q)', 'AIC']
