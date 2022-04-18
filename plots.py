@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from sklearn.feature_selection import r_regression
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 data = pd.read_csv("Cleaned_data.csv")
 # Perform feature selection on whole dataset.
@@ -62,6 +63,18 @@ print(windspeeds_months.shape)
 windspeeds_months = windspeeds_months.to_numpy()
 plot_acf(windspeeds_months, lags=12)
 plot_pacf(windspeeds_months, lags=12)
+plt.show()
+
+# Decomposition plot
+result = seasonal_decompose(powers, model='additive', period=1)
+data["Unnamed: 0"] = pd.to_datetime(data["Unnamed: 0"], format="%Y-%m-%d %H:%M:%S%z")
+datetime_index = pd.DatetimeIndex(data["Unnamed: 0"].values)
+data = data.set_index(datetime_index)
+data_months = data.resample('M').mean()
+powers_months = data_months["ActivePower"].tolist()
+result_months = seasonal_decompose(powers_months, model='additive', period=1)
+result.plot()
+result_months.plot()
 plt.show()
 
 # Dickley Fuller test
