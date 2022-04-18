@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from polynomial_regression import polynomial_prediction, polynomial_prediction_smarter
 from neural_network import neural_network
+from arima import model_fit
 
 def max(x: list) -> float:
     max = 0
@@ -44,16 +45,22 @@ print("RMSE of smart polynomial model: ", rmse_smart_polynomial)
 print("RMSE of neural network: ", rmse_neural_network)
 
 #Last 24 hours
-y_24 = y[len(y)-24:-1]
-x_24 = x[len(y)-24:-1]
+y_24 = y[len(y)-24:len(y)]
+x_24 = x[len(y)-24:len(x)]
+print("Length of x24 and y24: ", len(x_24), len(y_24))
 rmse_24_dumb_polynomial = sqrt(mean_squared_error(y_24, polynomial_prediction(x_24)))
 rmse_24_smart_polynomial = sqrt(mean_squared_error(y_24, polynomial_prediction_smarter(x_24)))
 rmse_24_nn = sqrt(mean_squared_error(y_24, neural_network.predict(x_24.reshape(-1, 1))))
+rmse_24_ar = sqrt(mean_squared_error(y_24, model_fit.predict(start=len(y)-24, end=len(y)-1)))
 plt.plot(x_24, y_24, label="actual")
 plt.plot(x_24, neural_network.predict(x_24.reshape(-1, 1)), label="neural network")
 plt.plot(x_24, polynomial_prediction_smarter(x_24), label="smart polynomial")
+plt.plot(x_24, model_fit.predict(start=len(y)-24, end=len(y)-1), label="Autoregression")
+plt.xlabel("Wind speed (m/s)")
+plt.ylabel("Power (kWh)")
 plt.legend()
 plt.show()
 print("RMSEs: \n", "Dumb polynomial: ", rmse_24_dumb_polynomial, "\n",
       "Smart polynomial: ", rmse_24_smart_polynomial, "\n",
-      "NN: ", rmse_24_nn)
+      "NN: ", rmse_24_nn, "\n",
+      "AR: ", rmse_24_ar)
