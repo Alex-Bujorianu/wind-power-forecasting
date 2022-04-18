@@ -4,3 +4,4 @@ sklearn
 missingno
 statsmodels
 numpy
+tqdm
