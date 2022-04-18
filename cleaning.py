@@ -17,14 +17,15 @@ series = series.resample('H').mean()
 print(series.shape)
 print(series.head())
 
-series = series.dropna(axis=0, how='any')
+series = series.dropna(axis=0, how='all')
 # Check for irregularity
+irregular_count = 0
 for i in range(1, len(series)):
-    irregular_count = 0
     if (series.index[i].hour - series.index[i-1].hour  > 1):
-        print('Time series is irregular')
+        print('Time series is irregular at:')
         print(series.index[i], series.index[i-1])
-        break
+        irregular_count += 1
+print("Number of irregularities is ", irregular_count)
 print(series.shape)
 print(series.head(10))
 print(series.isnull().values.any())
