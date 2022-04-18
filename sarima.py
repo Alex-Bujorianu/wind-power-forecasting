@@ -32,18 +32,30 @@ windspeeds_weeks = windspeeds_weeks.dropna()
 windspeeds_hours = subset['WindSpeed']
 
 # Autoregression plots
-plot_acf(windspeeds_weeks )
-plot_pacf(windspeeds_weeks)
+plot_acf(windspeeds_hours )
+plot_pacf(windspeeds_hours)
 plt.show()
 
 # Dickley Fuller test
+results_windspeeds_hours = adfuller(windspeeds_hours, autolag="AIC")
 results_windspeeds_day = adfuller(windspeeds_days, autolag="AIC")
 results_windspeeds_week = adfuller(windspeeds_weeks, autolag="AIC")
+print(results_windspeeds_hours)
 print(results_windspeeds_day)
 print(results_windspeeds_week)
 # So as expected, the windspeed is seasonal for the months, but not when taking into account
+print("Windspeed is (hours) stationary?", results_windspeeds_hours[0] < results_windspeeds_hours[4]['1%'])
 print("Windspeed is (day) stationary?", results_windspeeds_day[0] < results_windspeeds_day[4]['1%'])
 print("Windspeed is (weeks) stationary?", results_windspeeds_week[0] < results_windspeeds_week[4]['1%'])
+
+plt.figure(figsize=[15, 7.5]); # Set dimensions for figure
+plt.plot(windspeeds_hours)
+plt.title('Windspeed per hour')
+plt.ylabel('Windspeeds (m/s)')
+plt.xlabel('Date')
+plt.xticks(rotation=90)
+plt.grid(True)
+plt.show()
 
 plt.figure(figsize=[15, 7.5]); # Set dimensions for figure
 plt.plot(windspeeds_days)
@@ -71,9 +83,9 @@ plt.show()
 #         inplace=True)
 # print(data.shape)
 
-results_windspeeds_df = adfuller(windspeeds_weeks, autolag="AIC")
-print(results_windspeeds_df)
-print("Windspeed is (months) stationary?", results_windspeeds_df[0] < results_windspeeds_df[4]['5%'])
+# results_windspeeds_df = adfuller(windspeeds_weeks, autolag="AIC")
+# print(results_windspeeds_df)
+# print("Windspeed is (months) stationary?", results_windspeeds_df[0] < results_windspeeds_df[4]['5%'])
 
 
 def optimize_SARIMA(parameters_list, d, D, s, exog):
@@ -119,6 +131,6 @@ parameters = product(p, q, P, Q)
 parameters_list = list(parameters)
 print(len(parameters_list))
 
-result_df = optimize_SARIMA(parameters_list, 1, 1, 365, windspeeds_weeks)
+result_df = optimize_SARIMA(parameters_list, 1, 1, 365, windspeeds_hours)
 result_df
 
