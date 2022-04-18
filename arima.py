@@ -5,6 +5,8 @@ from joblib import Parallel
 from joblib import delayed
 from warnings import catch_warnings
 from warnings import filterwarnings
+
+from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
@@ -26,16 +28,8 @@ subset = subset.drop(['Unnamed: 0'], axis=1)
 
 print(subset.isna().sum())
 
-windspeeds_hours = subset['WindSpeed']
-print(windspeeds_hours.shape)
+powers_hours = subset['ActivePower'].to_numpy()
+train = powers_hours[0:len(powers_hours)-24]
 
-order = ()
-model = ARIMA(windspeeds_hours.iloc[:-24, :], order=order)
+model = AutoReg(train, lags=40)
 model_fit = model.fit()
-
-# Plot residual errors
-residuals = pd.DataFrame(model_fit.resid)
-fig, ax = plt.subplots(1,2)
-residuals.plot(title="Residuals", ax=ax[0])
-residuals.plot(kind='kde', title='Density', ax=ax[1])
-plt.show()
