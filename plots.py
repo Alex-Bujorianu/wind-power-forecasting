@@ -4,8 +4,11 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from sklearn.feature_selection import r_regression
 from statsmodels.tsa.seasonal import seasonal_decompose
+import missingno
 
 data = pd.read_csv("Cleaned_data.csv")
+raw_data = pd.read_csv("Turbine_Data.csv")
+missingno.matrix(raw_data)
 # Perform feature selection on whole dataset.
 X = pd.read_csv("Turbine_Data.csv")
 X = X.drop(labels="Unnamed: 0", axis=1)

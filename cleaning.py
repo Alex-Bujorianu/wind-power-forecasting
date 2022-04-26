@@ -1,5 +1,6 @@
 import pandas as pd
 import missingno as msno
+import matplotlib.pyplot as plt
 
 series = pd.read_csv("Turbine_Data.csv")
 # Remove uninteresting columns
