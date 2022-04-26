@@ -15,9 +15,21 @@ X = X.drop(labels="Unnamed: 0", axis=1)
 X = X.drop(labels="WTG", axis=1)
 X.dropna(axis=0, how='any', inplace=True)
 print(X)
+# Match these correlations to their column names
+list_of_column_names = X.columns
+list_of_results = []
 correlation_coefficients = r_regression(X=X, y=X["ActivePower"].tolist())
+for i in range(len(correlation_coefficients)):
+    list_of_results.append({"Variable": list_of_column_names[i],
+                            "Correlation": correlation_coefficients[i]})
+
+# Temperature is mispelled in the data, this is not a typo
+print("Range of temperatures: ", min(X['AmbientTemperatue']), ' to',
+      max(X['AmbientTemperatue']))
+list_of_results = sorted(list_of_results, key=lambda d: d['Correlation'], reverse=True)
+print(list_of_results)
 print(correlation_coefficients)
-subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection"]]
+subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection", "AmbientTemperatue"]]
 print(subset.head())
 plt.scatter(subset['WindSpeed'], subset['ActivePower'])
 plt.xlabel("Wind speed (m/s)")
