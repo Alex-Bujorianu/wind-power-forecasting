@@ -5,6 +5,7 @@ from statsmodels.tsa.stattools import adfuller
 from sklearn.feature_selection import r_regression
 from statsmodels.tsa.seasonal import seasonal_decompose
 import missingno
+from numpy import polyfit, poly1d
 
 data = pd.read_csv("Cleaned_data.csv")
 raw_data = pd.read_csv("Turbine_Data.csv")
@@ -53,10 +54,15 @@ for i in range(len(windspeeds)):
     else:
         continue
 
-plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==5],
+X_5ms = [x["Wind direction"] for x in results if x["Wind speed"]==5]
+Y_5ms = [x["Power"] for x in results if x["Wind speed"]==5]
+plt.plot(X_5ms,
             [x["Power"] for x in results if x["Wind speed"]==5], 'o', label="5m/s")
 plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==10],
             [x["Power"] for x in results if x["Wind speed"]==10], 'o', label="10m/s")
+best_fit = polyfit(X_5ms, Y_5ms, 1)
+best_fit_model = poly1d(best_fit)
+plt.plot(X_5ms, [best_fit_model(x) for x in X_5ms], 'r', label="best fit")
 plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
