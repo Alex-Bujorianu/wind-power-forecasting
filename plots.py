@@ -70,10 +70,13 @@ subset = subset.set_index(datetime_index)
 #Drop redundant column
 subset = subset.drop(['Unnamed: 0'], axis=1)
 print(subset.shape)
-#Resampling to hoursand taking the average of each hour
+
+
 
 # Autoregression plots
 windspeeds_months = subset['WindSpeed'].resample('M').mean()
+windspeeds_months.plot(style='k', title="Monthly power production")
+plt.show()
 print(windspeeds_months.shape)
 windspeeds_months = windspeeds_months.to_numpy()
 plot_acf(windspeeds_months, lags=12)
