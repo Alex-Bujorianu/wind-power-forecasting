@@ -56,13 +56,16 @@ for i in range(len(windspeeds)):
 
 X_5ms = [x["Wind direction"] for x in results if x["Wind speed"]==5]
 Y_5ms = [x["Power"] for x in results if x["Wind speed"]==5]
+X_10ms = [x["Wind direction"] for x in results if x["Wind speed"]==10]
+Y_10ms = [x["Power"] for x in results if x["Wind speed"]==10]
 plt.plot(X_5ms,
             [x["Power"] for x in results if x["Wind speed"]==5], 'o', label="5m/s")
-plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==10],
-            [x["Power"] for x in results if x["Wind speed"]==10], 'o', label="10m/s")
+plt.plot(X_10ms, Y_10ms, 'o', label="10m/s")
 best_fit = polyfit(X_5ms, Y_5ms, 1)
 best_fit_model = poly1d(best_fit)
+best_fit_10ms = poly1d(polyfit(X_10ms, Y_10ms, 1))
 plt.plot(X_5ms, [best_fit_model(x) for x in X_5ms], 'r', label="best fit")
+plt.plot(X_10ms, [best_fit_10ms(x) for x in X_10ms], 'g', label="best fit")
 plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
