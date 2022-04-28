@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from polynomial_regression import polynomial_prediction, polynomial_prediction_smarter
-from neural_network import neural_network
+from neural_network import neural_network, bivariate_neural_network
 from arima import model_fit
 
 def max(x: list) -> float:
@@ -24,8 +24,10 @@ def min(x: list) -> float:
 
 data = pd.read_csv("Cleaned_data.csv")
 x = np.array(data['WindSpeed'].tolist())
+x_bv = np.column_stack((data['WindSpeed'].values, data['AmbientTemperatue'].values))
 y = np.array(data['ActivePower'].tolist())
 print(len(x), len(y))
+X_bv_train, X_bv_test = train_test_split(x_bv, test_size=0.20, random_state=101)
 X_train, x_test = train_test_split(x, test_size=0.20, random_state=101)
 Y_train, y_test = train_test_split(y, test_size=0.20, random_state=101)
 print(x_test, y_test)
@@ -36,13 +38,16 @@ print("Lengths of x_test and y_test: ", len(x_test), len(y_test))
 mse_dumb_polynomial = mean_squared_error(y_test, polynomial_prediction(x_test))
 mse_smart_polynomial = mean_squared_error(y_test, polynomial_prediction_smarter(x_test))
 mse_neural_network = mean_squared_error(y_test, neural_network.predict(x_test.reshape(-1, 1)))
+mse_bivariate_nn = mean_squared_error(y_test, bivariate_neural_network.predict(X_bv_test))
 rmse_dumb_polynomial = sqrt(mse_dumb_polynomial)
 rmse_smart_polynomial = sqrt(mse_smart_polynomial)
 rmse_neural_network = sqrt(mse_neural_network)
+rmse_bivariate_nn = sqrt(mse_bivariate_nn)
 print("MSE scores: \n", "Dumb polynomial: ", mse_dumb_polynomial, "Smart polynomial: ", mse_smart_polynomial)
 print("RMSE of dumb polynomial model: ", rmse_dumb_polynomial)
 print("RMSE of smart polynomial model: ", rmse_smart_polynomial)
 print("RMSE of neural network: ", rmse_neural_network)
+print("RMSE of bivariate NN: ", rmse_bivariate_nn)
 
 #Last 24 hours
 y_24 = y[len(y)-24:len(y)]
