@@ -5,6 +5,7 @@ from statsmodels.tsa.stattools import adfuller
 from sklearn.feature_selection import r_regression
 from statsmodels.tsa.seasonal import seasonal_decompose
 
+
 data = pd.read_csv("Cleaned_data.csv")
 # Perform feature selection on whole dataset.
 X = pd.read_csv("Turbine_Data.csv")
