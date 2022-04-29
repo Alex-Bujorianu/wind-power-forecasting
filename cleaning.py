@@ -1,9 +1,10 @@
 import pandas as pd
 import missingno as msno
+import matplotlib.pyplot as plt
 
 series = pd.read_csv("Turbine_Data.csv")
 # Remove uninteresting columns
-series = series[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection"]]
+series = series[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection", "AmbientTemperatue"]]
 print(series.shape)
 
 #convert Datetime to pandas datetimeand set it as index
@@ -18,7 +19,7 @@ series = series.resample('H').mean()
 print(series.shape)
 print(series.head())
 
-series = series.dropna(axis=0, how='all')
+series = series.dropna(axis=0, how='any')
 # Check for irregularity
 irregular_count = 0
 for i in range(1, len(series)):
@@ -38,4 +39,5 @@ msno.matrix(series)
 plt.show()
 
 if not series.isnull().values.any():
+    print("Saving to file…")
     series.to_csv("Cleaned_data.csv", index=True)

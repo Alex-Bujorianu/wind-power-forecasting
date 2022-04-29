@@ -4,18 +4,34 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from sklearn.feature_selection import r_regression
 from statsmodels.tsa.seasonal import seasonal_decompose
+import missingno
+from numpy import polyfit, poly1d
 
 
 data = pd.read_csv("Cleaned_data.csv")
+raw_data = pd.read_csv("Turbine_Data.csv")
+missingno.matrix(raw_data)
 # Perform feature selection on whole dataset.
 X = pd.read_csv("Turbine_Data.csv")
 X = X.drop(labels="Unnamed: 0", axis=1)
 X = X.drop(labels="WTG", axis=1)
 X.dropna(axis=0, how='any', inplace=True)
 print(X)
+# Match these correlations to their column names
+list_of_column_names = X.columns
+list_of_results = []
 correlation_coefficients = r_regression(X=X, y=X["ActivePower"].tolist())
+for i in range(len(correlation_coefficients)):
+    list_of_results.append({"Variable": list_of_column_names[i],
+                            "Correlation": correlation_coefficients[i]})
+
+# Temperature is mispelled in the data, this is not a typo
+print("Range of temperatures: ", min(X['AmbientTemperatue']), ' to',
+      max(X['AmbientTemperatue']))
+list_of_results = sorted(list_of_results, key=lambda d: d['Correlation'], reverse=True)
+print(list_of_results)
 print(correlation_coefficients)
-subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection"]]
+subset = data[["Unnamed: 0", "ActivePower", "WindSpeed", "WindDirection", "AmbientTemperatue"]]
 print(subset.head())
 plt.scatter(subset['WindSpeed'], subset['ActivePower'])
 plt.xlabel("Wind speed (m/s)")
@@ -39,10 +55,18 @@ for i in range(len(windspeeds)):
     else:
         continue
 
-plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==5],
+X_5ms = [x["Wind direction"] for x in results if x["Wind speed"]==5]
+Y_5ms = [x["Power"] for x in results if x["Wind speed"]==5]
+X_10ms = [x["Wind direction"] for x in results if x["Wind speed"]==10]
+Y_10ms = [x["Power"] for x in results if x["Wind speed"]==10]
+plt.plot(X_5ms,
             [x["Power"] for x in results if x["Wind speed"]==5], 'o', label="5m/s")
-plt.plot([x["Wind direction"] for x in results if x["Wind speed"]==10],
-            [x["Power"] for x in results if x["Wind speed"]==10], 'o', label="10m/s")
+plt.plot(X_10ms, Y_10ms, 'o', label="10m/s")
+best_fit = polyfit(X_5ms, Y_5ms, 1)
+best_fit_model = poly1d(best_fit)
+best_fit_10ms = poly1d(polyfit(X_10ms, Y_10ms, 1))
+plt.plot(X_5ms, [best_fit_model(x) for x in X_5ms], 'r', label="best fit")
+plt.plot(X_10ms, [best_fit_10ms(x) for x in X_10ms], 'g', label="best fit")
 plt.xlabel("Wind Direction (degrees)")
 plt.ylabel("Power (kW)")
 plt.legend()
@@ -56,10 +80,13 @@ subset = subset.set_index(datetime_index)
 #Drop redundant column
 subset = subset.drop(['Unnamed: 0'], axis=1)
 print(subset.shape)
-#Resampling to hoursand taking the average of each hour
+
+
 
 # Autoregression plots
 windspeeds_months = subset['WindSpeed'].resample('M').mean()
+windspeeds_months.plot(style='k', title="Monthly power production")
+plt.show()
 print(windspeeds_months.shape)
 windspeeds_months = windspeeds_months.to_numpy()
 plot_acf(windspeeds_months, lags=12)
