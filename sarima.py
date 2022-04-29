@@ -32,7 +32,6 @@ windspeeds_months = subset['WindSpeed'].resample('M').mean()
 
 windspeeds_days = windspeeds_days.dropna()
 windspeeds_weeks = windspeeds_weeks.dropna()
-windspeeds_months.dropna()
 windspeeds_hours = subset['WindSpeed']
 
 # Autoregression plots
@@ -59,14 +58,10 @@ windspeeds_hours = subset['WindSpeed']
 plot_acf(windspeeds_months, lags=12)
 plot_pacf(windspeeds_months, lags=12)
 plt.show()
-data = windspeeds_weeks.drop(index=windspeeds_weeks.index[:4],
-        axis=0,
-        inplace=True)
-#print(data.shape)
 
 results_windspeeds_df = adfuller(windspeeds_weeks, autolag="AIC")
 print(results_windspeeds_df)
-print("Windspeed is (months) stationary?", results_windspeeds_df[0] < results_windspeeds_df[4]['1%'])
+print("Windspeed is (weeks) stationary?", results_windspeeds_df[0] < results_windspeeds_df[4]['1%'])
 
 #m = 12 as yearly periods
 #result = auto_arima(windspeeds_months, seasonal=True, m=12, start_p=0, start_q=0, max_P=5, max_Q=5, max_D=5).summary()
