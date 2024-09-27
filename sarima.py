@@ -10,7 +10,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
 import pandas as pd
-from pmdarima.arima import auto_arima
+#from pmdarima.arima import auto_arima
 
 import matplotlib.pyplot as plt
 from tqdm.notebook import tqdm_notebook
@@ -130,4 +130,3 @@ plt.show()
 #
 # result_df = optimize_SARIMA(parameters_list, 1, 1, 12, windspeeds_months)
 # result_df
-
